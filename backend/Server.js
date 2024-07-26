@@ -47,6 +47,9 @@ const SalesPersonDSA= require('./UKS/Sales_person_dsa_reg');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
+const https = require('https');
+const WebSocket = require('ws');
+const fs = require('fs');
 // const bcrypt = require('bcryptjs');
 
 const connectDB = require('../backend/db');
@@ -66,6 +69,21 @@ const transporter = nodemailer.createTransport({
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
     },
+});
+
+const server = https.createServer({
+    cert: fs.readFileSync('/www/server/panel/vhost/cert/frontend/fullchain.pem'),
+    key: fs.readFileSync('/www/server/panel/vhost/cert/frontend/privkey.pem')
+}, app);
+
+const wss = new WebSocket.Server({ server });
+
+wss.on('connection', function connection(ws) {
+    ws.on('message', function incoming(message) {
+        console.log('received: %s', message);
+    });
+
+    ws.send('something');
 });
 
 // Define the customer schema
@@ -2950,6 +2968,7 @@ app.get('/api/document-type', async (req, res) => {
 });
 
 
-app.listen(8000, () => {
-    console.log('Server started on port 8000');
+server.listen(8000, () => {
+    console.log(`Server running on https://148.251.230.14:8000:${8000}`);
+  console.log('WebSocket server is running on wss://148.251.230.14:${8000}');
 });
