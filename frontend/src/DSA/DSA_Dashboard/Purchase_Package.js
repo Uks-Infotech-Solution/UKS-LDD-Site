@@ -20,7 +20,7 @@ function Purchased_Package() {
 
     const fetchLatestPackage = async (dsaId) => {
         try {
-            const response = await axios.get(`http://localhost:8000/buy_packages/dsa/${dsaId}`);
+            const response = await axios.get(`https://uksinfotechsolution.in:8000/buy_packages/dsa/${dsaId}`);
             setLatestPackage(response.data); // Assuming the backend returns the latest active package
             // console.log(response.data); 
             

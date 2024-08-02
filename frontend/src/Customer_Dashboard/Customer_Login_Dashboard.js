@@ -33,7 +33,7 @@ function Customer_Login_Dashboard() {
 
     const fetchDownloadTableCount = async (customerId) => {
         try {
-            const response = await axios.get(`http://localhost:8000/dsa-customer/downloadtable/count?customerId=${customerId}`);
+            const response = await axios.get(`https://uksinfotechsolution.in:8000/dsa-customer/downloadtable/count?customerId=${customerId}`);
             setDownloadTableCount(response.data.count);
         } catch (error) {
             console.error('Error fetching download table count:', error.message);
@@ -42,7 +42,7 @@ function Customer_Login_Dashboard() {
 
     const fetchTableCount = async (customerId) => {
         try {
-            const response = await axios.get(`http://localhost:8000/dsa-customer/table/count?customerId=${customerId}`);
+            const response = await axios.get(`https://uksinfotechsolution.in:8000/dsa-customer/table/count?customerId=${customerId}`);
             setTableCount(response.data.count);
         } catch (error) {
             console.error('Error fetching table count:', error.message);
@@ -51,7 +51,7 @@ function Customer_Login_Dashboard() {
 
     const fetchCustomerDetails = async (customerId) => {
         try {
-            const response = await axios.get('http://localhost:8000/customer-details', {
+            const response = await axios.get('https://uksinfotechsolution.in:8000/customer-details', {
                 params: { customerId: customerId }
             });
             setCustomerDetails(response.data);
@@ -62,7 +62,7 @@ function Customer_Login_Dashboard() {
 
     const fetchLastLoginSession = async (customerId) => {
         try {
-            const response = await axios.get('http://localhost:8000/customer/login/last-session', {
+            const response = await axios.get('https://uksinfotechsolution.in:8000/customer/login/last-session', {
                 params: { customerId: customerId }
             });
             setLastLoginDateTime(response.data.loginDateTime);

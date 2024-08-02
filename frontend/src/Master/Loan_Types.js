@@ -18,7 +18,7 @@ const Loan_Types = () => {
   useEffect(() => {
     const fetchLoanTypes = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/loan-types');
+        const response = await axios.get('https://uksinfotechsolution.in:8000/api/loan-types');
         setLoanTypes(response.data);
       } catch (error) {
         console.error('Error fetching loan types:', error);
@@ -34,7 +34,7 @@ const Loan_Types = () => {
 
     if (isEditing) {
       try {
-        const response = await axios.put(`http://localhost:8000/api/loan-types/${editId}`, { loanType });
+        const response = await axios.put(`https://uksinfotechsolution.in:8000/api/loan-types/${editId}`, { loanType });
         setMessage(response.data.message);
         setLoanTypes(loanTypes.map((type, index) => index === editIndex ? { ...type, type: loanType } : type));
         setLoanType('');
@@ -49,7 +49,7 @@ const Loan_Types = () => {
       }
     } else {
       try {
-        const response = await axios.post('http://localhost:8000/api/loan-types', { loanType });
+        const response = await axios.post('https://uksinfotechsolution.in:8000/api/loan-types', { loanType });
         setMessage(response.data.message);
         setLoanTypes([...loanTypes, { type: loanType, _id: response.data._id }]);
         setLoanType('');
@@ -76,7 +76,7 @@ const Loan_Types = () => {
 
   const handleSaveChanges = async () => {
     try {
-      const response = await axios.put(`http://localhost:8000/api/loan-types/${editId}`, { loanType: currentEdit.type });
+      const response = await axios.put(`https://uksinfotechsolution.in:8000/api/loan-types/${editId}`, { loanType: currentEdit.type });
       setMessage(response.data.message);
       setLoanTypes(loanTypes.map((type, index) => index === editIndex ? { ...type, type: currentEdit.type } : type));
       setIsEditing(false);
@@ -93,7 +93,7 @@ const Loan_Types = () => {
 
   const handleDelete = async (index) => {
     try {
-      await axios.delete(`http://localhost:8000/api/loan-types/${loanTypes[index]._id}`);
+      await axios.delete(`https://uksinfotechsolution.in:8000/api/loan-types/${loanTypes[index]._id}`);
       setLoanTypes(loanTypes.filter((_, i) => i !== index));
       setMessage('Loan type deleted successfully');
       setError('');

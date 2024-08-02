@@ -28,7 +28,7 @@ function Last_Div() {
 
     const fetchDownloadTableCount = async (customerId) => {
         try {
-            const response = await axios.get(`http://localhost:8000/api/customer/applications/count/${customerId}`);
+            const response = await axios.get(`https://uksinfotechsolution.in:8000/api/customer/applications/count/${customerId}`);
             setDownloadTableCount(response.data.count);
         } catch (error) {
             console.error('Error fetching download table count:', error.message);
@@ -37,7 +37,7 @@ function Last_Div() {
 
     const fetchTableCount = async (customerId) => {
         try {
-            const response = await axios.get(`http://localhost:8000/customer/loan/apply/view/count/${customerId}`);
+            const response = await axios.get(`https://uksinfotechsolution.in:8000/customer/loan/apply/view/count/${customerId}`);
 
 
             setTableCount(response.data.count);
@@ -48,7 +48,7 @@ function Last_Div() {
     useEffect(() => {
         const fetchLoanStatusCounts = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/api/dsa/loan/status/count/customer${customerId}`);
+                const response = await axios.get(`https://uksinfotechsolution.in:8000/api/dsa/loan/status/count/customer${customerId}`);
                 setApprovedCount(response.data.approvedCount);
                 setRejectedCount(response.data.rejectedCount);
             } catch (error) {

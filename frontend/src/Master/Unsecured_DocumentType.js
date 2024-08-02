@@ -18,7 +18,7 @@ const Unsecured_DocumentTypeForm = () => {
 
   const fetchDocumentTypes = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/unsecured/document-type');
+      const response = await axios.get('https://uksinfotechsolution.in:8000/api/unsecured/document-type');
       setDocumentTypes(response.data);
     } catch (error) {
       console.error('Error fetching document types:', error);
@@ -29,7 +29,7 @@ const Unsecured_DocumentTypeForm = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:8000/api/unsecured/document-type', { documenttype: documentType });
+      const response = await axios.post('https://uksinfotechsolution.in:8000/api/unsecured/document-type', { documenttype: documentType });
       setMessage(response.data.message);
       setDocumentType('');
       setError('');
@@ -52,7 +52,7 @@ const Unsecured_DocumentTypeForm = () => {
 
   const handleEdit = async () => {
     try {
-      const response = await axios.put(`http://localhost:8000/api/unsecured/document-type/${currentEdit.id}`, { documenttype: currentEdit.type });
+      const response = await axios.put(`https://uksinfotechsolution.in:8000/api/unsecured/document-type/${currentEdit.id}`, { documenttype: currentEdit.type });
       setMessage(response.data.message);
       setEditModal(false);
       fetchDocumentTypes();
@@ -65,7 +65,7 @@ const Unsecured_DocumentTypeForm = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:8000/api/unsecured/document-type/${id}`);
+      const response = await axios.delete(`https://uksinfotechsolution.in:8000/api/unsecured/document-type/${id}`);
       setMessage(response.data.message);
       fetchDocumentTypes();
     } catch (error) {

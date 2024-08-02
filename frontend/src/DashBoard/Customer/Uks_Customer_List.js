@@ -41,7 +41,7 @@ function Uks_Customer_List() {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/');
+        const response = await axios.get('https://uksinfotechsolution.in:8000/');
         const customersData = response.data;
         setCustomers(customersData);
         console.log(response.data);
@@ -67,7 +67,7 @@ function Uks_Customer_List() {
       const newAddresses = {};
       for (let customer of customers) {
         try {
-          const response = await axios.get('http://localhost:8000/view-address', {
+          const response = await axios.get('https://uksinfotechsolution.in:8000/view-address', {
             params: { customerId: customer._id },
           });
           if (response.status === 200) {
@@ -92,7 +92,7 @@ function Uks_Customer_List() {
       const newLoanProcessingDetails = {};
       for (let customer of customers) {
         try {
-          const response = await axios.get('http://localhost:8000/get-loan-processing', {
+          const response = await axios.get('https://uksinfotechsolution.in:8000/get-loan-processing', {
             params: { customerId: customer._id },
           });
           if (response.status === 200) {
@@ -112,7 +112,7 @@ function Uks_Customer_List() {
 
   const fetchProfilePicture = async (customerId) => {
     try {
-      const response = await axios.get(`http://localhost:8000/api/profile/view-profile-picture?customerId=${customerId}`, {
+      const response = await axios.get(`https://uksinfotechsolution.in:8000/api/profile/view-profile-picture?customerId=${customerId}`, {
         responseType: 'arraybuffer'
       });
       const contentType = response.headers['content-type'];

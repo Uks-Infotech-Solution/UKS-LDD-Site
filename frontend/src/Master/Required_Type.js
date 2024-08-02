@@ -18,7 +18,7 @@ const Required_Type = () => {
   useEffect(() => {
     const fetchRequiredTypes = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/dsa/required/type');
+        const response = await axios.get('https://uksinfotechsolution.in:8000/api/dsa/required/type');
         setRequiredTypes(response.data);
       } catch (error) {
         console.error('Error fetching required types:', error);
@@ -34,7 +34,7 @@ const Required_Type = () => {
 
     if (isEditing) {
       try {
-        const response = await axios.put(`http://localhost:8000/api/dsa/required/type/${editId}`, { requiredType: documentType });
+        const response = await axios.put(`https://uksinfotechsolution.in:8000/api/dsa/required/type/${editId}`, { requiredType: documentType });
         setMessage(response.data.message);
         setRequiredTypes(requiredTypes.map((type, index) => index === editIndex ? { ...type, requiredType: documentType } : type));
         setDocumentType('');
@@ -49,7 +49,7 @@ const Required_Type = () => {
       }
     } else {
       try {
-        const response = await axios.post('http://localhost:8000/api/dsa/required/type', { requiredType: documentType });
+        const response = await axios.post('https://uksinfotechsolution.in:8000/api/dsa/required/type', { requiredType: documentType });
         setMessage(response.data.message);
         setRequiredTypes([...requiredTypes, { requiredType: documentType, _id: response.data._id }]);
         setDocumentType('');
@@ -76,7 +76,7 @@ const Required_Type = () => {
 
   const handleSaveChanges = async () => {
     try {
-      const response = await axios.put(`http://localhost:8000/api/dsa/required/type/${editId}`, { requiredType: currentEdit.requiredType });
+      const response = await axios.put(`https://uksinfotechsolution.in:8000/api/dsa/required/type/${editId}`, { requiredType: currentEdit.requiredType });
       setMessage(response.data.message);
       setRequiredTypes(requiredTypes.map((type, index) => index === editIndex ? { ...type, requiredType: currentEdit.requiredType } : type));
       setIsEditing(false);
@@ -93,7 +93,7 @@ const Required_Type = () => {
 
   const handleDelete = async (index) => {
     try {
-      await axios.delete(`http://localhost:8000/api/dsa/required/type/${requiredTypes[index]._id}`);
+      await axios.delete(`https://uksinfotechsolution.in:8000/api/dsa/required/type/${requiredTypes[index]._id}`);
       setRequiredTypes(requiredTypes.filter((_, i) => i !== index));
       setMessage('Required type deleted successfully');
       setError('');
