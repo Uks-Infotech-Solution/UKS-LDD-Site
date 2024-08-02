@@ -47,7 +47,7 @@ function DsaTable() {
   };
   const fetchDSADetails = async () => {
     try {
-      const response = await axios.get(`https://uksinfotechsolution.in:8000/api/dsa/list`);
+      const response = await axios.get(`http://localhost:8000/api/dsa/list`);
       setDsaData(response.data.dsa);
       setLoading(false);
   
@@ -55,7 +55,7 @@ function DsaTable() {
       const addressPromises = response.data.dsa.map(dsa => {
         if (!fetchedAddressIdsRef.current.has(dsa._id)) {
           fetchedAddressIdsRef.current.add(dsa._id);
-          return axios.get(`https://uksinfotechsolution.in:8000/api/dsa/address?dsaId=${dsa._id}`);
+          return axios.get(`http://localhost:8000/api/dsa/address?dsaId=${dsa._id}`);
         }
         return Promise.resolve(null); // Skip if already fetched
       });
@@ -82,7 +82,7 @@ function DsaTable() {
     }));
   
     try {
-      const response = await axios.get(`https://uksinfotechsolution.in:8000/api/dsa/getLoanDetails/${dsaId}`);
+      const response = await axios.get(`http://localhost:8000/api/dsa/getLoanDetails/${dsaId}`);
       const loanDetails = response.data.loanDetails;
   
       if (loanDetails && Object.keys(loanDetails).length > 0) {

@@ -18,7 +18,7 @@ const Employee_Type = () => {
 
   const fetchEmployeeTypes = async () => {
     try {
-      const response = await axios.get('https://uksinfotechsolution.in:8000/api/employee-types');
+      const response = await axios.get('http://localhost:8000/api/employee-types');
       setEmployeeTypes(response.data);
     } catch (error) {
       console.error('Error fetching employee types:', error);
@@ -28,7 +28,7 @@ const Employee_Type = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://uksinfotechsolution.in:8000/api/employee-type', { employeeType });
+      const response = await axios.post('http://localhost:8000/api/employee-type', { employeeType });
       setMessage(response.data.message);
       setEmployeeType('');
       setError('');
@@ -48,7 +48,7 @@ const Employee_Type = () => {
     e.preventDefault();
     console.log('Current Edit State:', currentEdit); // Debug log
     try {
-      const response = await axios.put(`https://uksinfotechsolution.in:8000/api/employee-type/${currentEdit.id}`, { employeeType: currentEdit.type });
+      const response = await axios.put(`http://localhost:8000/api/employee-type/${currentEdit.id}`, { employeeType: currentEdit.type });
       setMessage('Employee type updated successfully');
       setEditModal(false);
       setCurrentEdit({ id: null, type: '' });
@@ -62,7 +62,7 @@ const Employee_Type = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://uksinfotechsolution.in:8000/api/employee-type/${id}`);
+      await axios.delete(`http://localhost:8000/api/employee-type/${id}`);
       setMessage('Employee type deleted successfully');
       fetchEmployeeTypes();
     } catch (error) {

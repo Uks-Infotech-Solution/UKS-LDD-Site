@@ -16,12 +16,12 @@ const VerticalBoxes = () => {
 
     const fetchDSADetails = async () => {
         try {
-            const response = await axios.get('https://uksinfotechsolution.in:8000/api/dsa/list');
+            const response = await axios.get('http://localhost:8000/api/dsa/list');
             const dsas = response.data.dsa;
 
             const dsaWithAddressPromises = dsas.map(async (dsa) => {
                 try {
-                    const addressResponse = await axios.get(`https://uksinfotechsolution.in:8000/api/dsa/address?dsaId=${dsa._id}`);
+                    const addressResponse = await axios.get(`http://localhost:8000/api/dsa/address?dsaId=${dsa._id}`);
                     if (addressResponse.data && addressResponse.data.permanentAddress) {
                         return {
                             ...dsa,

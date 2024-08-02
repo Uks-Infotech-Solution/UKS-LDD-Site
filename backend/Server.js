@@ -426,7 +426,7 @@ app.post('/buy_packagers', async (req, res) => {
             html: `
           <h4>${dsaName} (UKS-DSA_0${dsaNumber}) Package Activation Mail,</h4>
           <p>${dsaName} has selected the ${packageName} (${packageAmount}) Package,</p>
-          <p>To activate this package <a href="https://uksinfotechsolution.in/package/activate/${token}">Click Here</a>.</p>
+          <p>To activate this package <a href="http://localhost/package/activate/${token}">Click Here</a>.</p>
           <p>Thanks & regards,<br>LDP Finanserv.</p>`,
         };
 
@@ -1240,7 +1240,7 @@ app.post('/api/dsa/register', async (req, res) => {
             html: `
             <p>Hello ${dsaName},</p>
             <p>Welcome to LDP Finanserv ,</p>
-            <p>To Activate Your Account  <a href="https://uksinfotechsolution.in/dsa/activate/${token}">Click </a> Here.</p>
+            <p>To Activate Your Account  <a href="http://localhost/dsa/activate/${token}">Click </a> Here.</p>
             <p>Thanks & regards,<br>LDP Finanserv.</p>`,
 
 
@@ -1415,7 +1415,7 @@ app.post('/dsa/forgotpassword', async (req, res) => {
             subject: 'Password Reset',
             html: `
             <p>Hi ${dsa.dsaName},</p>
-    <p><a href="https://uksinfotechsolution.in/dsa/reset/password/${token}">Click</a> to Reset Your Account (UKS-DSA-00${dsa.dsaNumber}) Password.</p>
+    <p><a href="http://localhost/dsa/reset/password/${token}">Click</a> to Reset Your Account (UKS-DSA-00${dsa.dsaNumber}) Password.</p>
             <p>Thanks & regards,<br>LDP Finanserv.</p>`,
 
         };
@@ -2098,7 +2098,7 @@ app.post('/customer/forgotpassword', async (req, res) => {
             subject: 'Password Reset',
             html: `
     <p>Hi ${customer.customerFname},</p>
-    <p><a href="https://uksinfotechsolution.in/customer/reset/password/${token}">Click</a> to Reset Your Account (UKS-CUS-00${customer.customerNo}) Password.</p>
+    <p><a href="http://localhost/customer/reset/password/${token}">Click</a> to Reset Your Account (UKS-CUS-00${customer.customerNo}) Password.</p>
     <p>Thanks & regards,<br>LDP Finanserv.</p>
 `,
 
@@ -2244,7 +2244,7 @@ app.post('/register', async (req, res) => {
         });
 
         const savedCustomer = await customer.save();
-        const confirmationUrl = `https://uksinfotechsolution.in/customer/activate/${token}`;
+        const confirmationUrl = `http://localhost/customer/activate/${token}`;
 
         const mailOptions = {
             from: process.env.EMAIL_USER,
@@ -2254,7 +2254,7 @@ app.post('/register', async (req, res) => {
             html: `
             <p>Hello ${customerFname},</p>
             <p>Welcome to LDP Finanserv ,</p>
-            <p>To Activate Your Account  <a href="https://uksinfotechsolution.in/customer/activate/${token}">Click </a> Here.</p>
+            <p>To Activate Your Account  <a href="http://localhost/customer/activate/${token}">Click </a> Here.</p>
             <p>Thanks & regards,<br>LDP Finanserv.</p>`,
 
 
@@ -2415,7 +2415,7 @@ app.post('/api/uksregister', async (req, res) => {
     try {
         await newUser.save();
 
-        const confirmationUrl = `https://uksinfotechsolution.in/uks/activate/${token}`;
+        const confirmationUrl = `http://localhost/uks/activate/${token}`;
         const mailOptions = {
             from: process.env.EMAIL_USER,
             to: email,
@@ -2423,7 +2423,7 @@ app.post('/api/uksregister', async (req, res) => {
             html: `
             <p>Hello ${name},</p>
             <p>Welcome to LDP Finanserv</p>
-            <p>To Activate Your Account <a href="https://uksinfotechsolution.in/uks/activate/${token}">Click Here</a>.</p>
+            <p>To Activate Your Account <a href="http://localhost/uks/activate/${token}">Click Here</a>.</p>
             <p>Thanks & regards,<br>LDP Finanserv.</p>`,
         };
 
@@ -2559,7 +2559,7 @@ app.post('/uks/forgotpassword', async (req, res) => {
             subject: 'Password Reset',
             html: `
             <p>Hi ${user.name},</p>
-            <p><a href="https://uksinfotechsolution.in/uks/reset/password/${token}">Click</a> to Reset Your Account (UKS-00${user.UKSNumber}) Password.</p>
+            <p><a href="http://localhost/uks/reset/password/${token}">Click</a> to Reset Your Account (UKS-00${user.UKSNumber}) Password.</p>
             <p>Thanks & regards,<br>LDP Finanserv.</p>`,
         };
 

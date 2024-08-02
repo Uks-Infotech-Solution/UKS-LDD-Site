@@ -16,7 +16,7 @@ const Loan_Level = () => {
   useEffect(() => {
     const fetchLoanLevels = async () => {
       try {
-        const response = await axios.get('https://uksinfotechsolution.in:8000/api/loan-levels');
+        const response = await axios.get('http://localhost:8000/api/loan-levels');
         setLoanLevels(response.data);
       } catch (error) {
         console.error('Error fetching loan levels:', error);
@@ -32,7 +32,7 @@ const Loan_Level = () => {
 
     if (isEditing) {
       try {
-        const response = await axios.put(`https://uksinfotechsolution.in:8000/api/loan-levels/${editId}`, { loanLevel });
+        const response = await axios.put(`http://localhost:8000/api/loan-levels/${editId}`, { loanLevel });
         setMessage(response.data.message);
         setLoanLevels(loanLevels.map((level, index) => index === editIndex ? { ...level, type: loanLevel } : level));
         setLoanLevel('');
@@ -47,7 +47,7 @@ const Loan_Level = () => {
       }
     } else {
       try {
-        const response = await axios.post('https://uksinfotechsolution.in:8000/api/loan-levels', { loanLevel });
+        const response = await axios.post('http://localhost:8000/api/loan-levels', { loanLevel });
         setMessage(response.data.message);
         setLoanLevels([...loanLevels, { type: loanLevel }]);
         setLoanLevel('');
@@ -73,7 +73,7 @@ const Loan_Level = () => {
 
   const handleDelete = async (index) => {
     try {
-      await axios.delete(`https://uksinfotechsolution.in:8000/api/loan-levels/${loanLevels[index]._id}`);
+      await axios.delete(`http://localhost:8000/api/loan-levels/${loanLevels[index]._id}`);
       setLoanLevels(loanLevels.filter((_, i) => i !== index));
       setMessage('Loan Level deleted successfully');
       setError('');

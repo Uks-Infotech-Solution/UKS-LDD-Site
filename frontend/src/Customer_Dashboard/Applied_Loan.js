@@ -40,7 +40,7 @@ function Applied_Loan() {
   useEffect(() => {
     const fetchLoanDetails = async () => {
       try {
-        const response = await axios.get(`https://uksinfotechsolution.in:8000/api/customer/${customerId}/loans`);
+        const response = await axios.get(`http://localhost:8000/api/customer/${customerId}/loans`);
         if (response.status === 200) {
           setAppliedLoan(response.data.data);
           console.log(response.data.data);
@@ -48,7 +48,7 @@ function Applied_Loan() {
 
           // Fetch address details for each DSA
           const addressPromises = response.data.data.map(loan => (
-            axios.get(`https://uksinfotechsolution.in:8000/api/dsa/address?dsaId=${loan.dsaId}`)
+            axios.get(`http://localhost:8000/api/dsa/address?dsaId=${loan.dsaId}`)
           ));
           const addressResponses = await Promise.all(addressPromises);
           const addresses = {};

@@ -42,7 +42,7 @@ function CustomerTable() {
   // Fetch DSA details
   const fetchDSADetails = async (dsaId) => {
     try {
-      const response = await axios.get(`https://uksinfotechsolution.in:8000/api/dsa?dsaId=${dsaId}`);
+      const response = await axios.get(`http://localhost:8000/api/dsa?dsaId=${dsaId}`);
       setDsaData(response.data);
     } catch (error) {
       console.error('Error fetching DSA details:', error);
@@ -59,7 +59,7 @@ function CustomerTable() {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const response = await axios.get('https://uksinfotechsolution.in:8000/');
+        const response = await axios.get('http://localhost:8000/');
         const customersData = response.data;
         setCustomers(customersData);
         // console.log(response.data);
@@ -85,7 +85,7 @@ function CustomerTable() {
       const newAddresses = {};
       for (let customer of customers) {
         try {
-          const response = await axios.get('https://uksinfotechsolution.in:8000/view-address', {
+          const response = await axios.get('http://localhost:8000/view-address', {
             params: { customerId: customer._id },
           });
           if (response.status === 200) {
@@ -109,7 +109,7 @@ function CustomerTable() {
       const newLoanProcessingDetails = {};
       for (let customer of customers) {
         try {
-          const response = await axios.get('https://uksinfotechsolution.in:8000/get-loan-processing', {
+          const response = await axios.get('http://localhost:8000/get-loan-processing', {
             params: { customerId: customer._id },
           });
           if (response.status === 200) {
@@ -131,7 +131,7 @@ function CustomerTable() {
 
   const fetchProfilePicture = async (customerId) => {
     try {
-      const response = await axios.get(`https://uksinfotechsolution.in:8000/api/profile/view-profile-picture?customerId=${customerId}`, {
+      const response = await axios.get(`http://localhost:8000/api/profile/view-profile-picture?customerId=${customerId}`, {
         responseType: 'arraybuffer'
       });
       const contentType = response.headers['content-type'];
@@ -243,7 +243,7 @@ function CustomerTable() {
     }
 
     try {
-      const response = await axios.post('https://uksinfotechsolution.in:8000/dsa-customer/table', {
+      const response = await axios.post('http://localhost:8000/dsa-customer/table', {
         dsaId: dsaData._id,
         customerId: selectedCustomer._id,
       });

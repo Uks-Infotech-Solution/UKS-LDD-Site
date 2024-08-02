@@ -21,7 +21,7 @@ const DSA_ResetPassword = () => {
       return;
     }
     try {
-      await axios.post(`https://uksinfotechsolution.in:8000/dsa/resetpassword/${token}`, { password });
+      await axios.post(`http://localhost:8000/dsa/resetpassword/${token}`, { password });
       setShowModal(true);
     } catch (error) {
       console.error('Error resetting password:', error);

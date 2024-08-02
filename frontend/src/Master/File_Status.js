@@ -18,7 +18,7 @@ const File_Status = () => {
   useEffect(() => {
     const fetchFileStatuses = async () => {
       try {
-        const response = await axios.get('https://uksinfotechsolution.in:8000/api/file-status');
+        const response = await axios.get('http://localhost:8000/api/file-status');
         setFileStatuses(response.data);
       } catch (error) {
         console.error('Error fetching file statuses:', error);
@@ -34,7 +34,7 @@ const File_Status = () => {
 
     if (isEditing) {
       try {
-        const response = await axios.put(`https://uksinfotechsolution.in:8000/api/file-status/${editId}`, { fileStatus });
+        const response = await axios.put(`http://localhost:8000/api/file-status/${editId}`, { fileStatus });
         setMessage(response.data.message);
         setFileStatuses(fileStatuses.map((status, index) => index === editIndex ? { ...status, type: fileStatus } : status));
         setFileStatus('');
@@ -49,7 +49,7 @@ const File_Status = () => {
       }
     } else {
       try {
-        const response = await axios.post('https://uksinfotechsolution.in:8000/api/file-status', { fileStatus });
+        const response = await axios.post('http://localhost:8000/api/file-status', { fileStatus });
         setMessage(response.data.message);
         setFileStatuses([...fileStatuses, { type: fileStatus, _id: response.data._id }]);
         setFileStatus('');
@@ -76,7 +76,7 @@ const File_Status = () => {
 
   const handleSaveChanges = async () => {
     try {
-      const response = await axios.put(`https://uksinfotechsolution.in:8000/api/file-status/${editId}`, { fileStatus: currentEdit.type });
+      const response = await axios.put(`http://localhost:8000/api/file-status/${editId}`, { fileStatus: currentEdit.type });
       setMessage(response.data.message);
       setFileStatuses(fileStatuses.map((status, index) => index === editIndex ? { ...status, type: currentEdit.type } : status));
       setIsEditing(false);
@@ -93,7 +93,7 @@ const File_Status = () => {
 
   const handleDelete = async (index) => {
     try {
-      await axios.delete(`https://uksinfotechsolution.in:8000/api/file-status/${fileStatuses[index]._id}`);
+      await axios.delete(`http://localhost:8000/api/file-status/${fileStatuses[index]._id}`);
       setFileStatuses(fileStatuses.filter((_, i) => i !== index));
       setMessage('File status deleted successfully');
       setError('');
