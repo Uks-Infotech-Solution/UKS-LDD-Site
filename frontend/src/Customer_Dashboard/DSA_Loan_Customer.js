@@ -22,7 +22,7 @@ const DSA_Loan_Customer = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-
+    const [showAddressModal, setShowAddressModal] = useState(false);
     // State variables for form inputs
     const [selectedLoanType, setSelectedLoanType] = useState('');
     const [inputLoanAmount, setInputLoanAmount] = useState('');
@@ -39,7 +39,7 @@ const DSA_Loan_Customer = () => {
     useEffect(() => {
         const fetchDSADetails = async () => {
             try {
-                const response = await axios.get(`http://148.251.230.14:8000/api/dsa?dsaId=${dsaId}`);
+                const response = await axios.get(`http://localhost:8000/api/dsa?dsaId=${dsaId}`);
                 setDsaDetails(response.data);
             } catch (error) {
                 console.error('Error fetching DSA details:', error);
@@ -52,7 +52,7 @@ const DSA_Loan_Customer = () => {
     useEffect(() => {
         const fetchLoanDetails = async () => {
             try {
-                const response = await axios.get(`http://148.251.230.14:8000/api/dsa/${dsaId}/loanDetails`);
+                const response = await axios.get(`http://localhost:8000/api/dsa/${dsaId}/loanDetails`);
                 if (response.status === 200) {
                     setLoanDetails(response.data.loanDetails);
                 }
@@ -67,7 +67,7 @@ const DSA_Loan_Customer = () => {
     useEffect(() => {
         const fetchCustomerDetails = async () => {
             try {
-                const response = await axios.get('http://148.251.230.14:8000/customer-details', {
+                const response = await axios.get('http://localhost:8000/customer-details', {
                     params: { customerId: customerId }
                 });
                 setCustomerDetails(response.data);
@@ -84,9 +84,9 @@ const DSA_Loan_Customer = () => {
     useEffect(() => {
         const fetchLoanLevels = async () => {
             try {
-                const response = await axios.get('http://148.251.230.14:8000/api/loan-levels');
+                const response = await axios.get('http://localhost:8000/api/loan-levels');
                 setLoanLevels(response.data);
-                console.log(response.data);
+                // console.log(response.data);
                 setLoading(false);
             } catch (err) {
                 setError(err);
@@ -100,7 +100,7 @@ const DSA_Loan_Customer = () => {
     useEffect(() => {
         const fetchDocumentTypes = async () => {
             try {
-                const response = await axios.get('http://148.251.230.14:8000/api/document-type');
+                const response = await axios.get('http://localhost:8000/api/document-type');
                 setDocumentTypes(response.data);
             } catch (error) {
                 console.error('Error fetching document types:', error);
@@ -113,7 +113,7 @@ const DSA_Loan_Customer = () => {
     useEffect(() => {
         const fetchUnsecured_DocumentTypes = async () => {
             try {
-                const response = await axios.get('http://148.251.230.14:8000/api/unsecured/document-type');
+                const response = await axios.get('http://localhost:8000/api/unsecured/document-type');
                 setUnsecured_DocumentTypes(response.data);
             } catch (error) {
                 console.error('Error fetching document types:', error);
@@ -123,7 +123,33 @@ const DSA_Loan_Customer = () => {
         fetchUnsecured_DocumentTypes();
     }, []);
 
-    const handleShowModal = () => setShowModal(true);
+    const handleShowModal = async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/loanapply/address/check', {
+                params: { customerId }
+            });
+
+            if (response.data) {
+                // If address is found, show the apply loan modal
+                setShowModal(true);
+            
+        } else {
+            // If address not found, show the address update modal
+            setShowAddressModal(true);
+          }
+        } catch (error) {
+            if (error.response && error.response.status === 404) {
+                // If address not found, show the address update modal
+                setShowAddressModal(true);
+            } else {
+                console.error('Server error', error);
+            }
+        }
+    };
+    const handleCloseAddressModal = () => {
+        setShowAddressModal(false);
+        navigate('/customer/profile/view', { state: { customerId } });
+    };
     const handleCloseModal = () => setShowModal(false);
     const handleShowSuccessModal = () => setShowSuccessModal(true);
     const handleCloseSuccessModal = () => {
@@ -169,7 +195,7 @@ const DSA_Loan_Customer = () => {
 
     const handleSubmit = async () => {
         try {
-            const response = await axios.post('http://148.251.230.14:8000/customer/loan/apply', {
+            const response = await axios.post('http://localhost:8000/customer/loan/apply', {
                 customerId: customerId,
                 customerName: customerDetails.customerFname,
                 customerNo: customerDetails.customerNo,
@@ -242,7 +268,20 @@ const DSA_Loan_Customer = () => {
                         Apply Loan
                     </Button>
                 </div>
-
+                {/* Address Update Modal */}
+                <Modal show={showAddressModal} onHide={handleCloseAddressModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Update Address</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        Please update your address to proceed with the Loan application.
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="primary" onClick={handleCloseAddressModal}>
+                            Update Address
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
                 <Modal show={showModal} onHide={handleCloseModal} centered>
                     <Modal.Header closeButton>
                         <Modal.Title className="text-success">Apply Loan</Modal.Title>
@@ -368,7 +407,7 @@ const DSA_Loan_Customer = () => {
                                 <Form.Label column sm={4}><strong>Document </strong></Form.Label>
                                 <Col sm={8}>
                                     <Form.Control as="select" value={selectedDocumentOption} onChange={handleDocumentOptionChange}>
-                                    <option value="" disabled>Select</option>
+                                        <option value="" disabled>Select</option>
                                         <option value="In Hand">In Hand</option>
                                         <option value="In Bank">In Bank</option>
                                         <option value="In Private Finance">In Private Finance</option>

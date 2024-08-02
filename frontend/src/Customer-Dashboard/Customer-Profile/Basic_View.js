@@ -36,7 +36,7 @@ function Profile_View() {
     const { isSidebarExpanded } = useSidebar();
     const location = useLocation();
     const { customerId } = location.state || {};
-    // console.log(customerId);
+    console.log(customerId);
     const [customerDetails, setCustomerDetails] = useState(null);
 
 
@@ -52,13 +52,11 @@ function Profile_View() {
     const [citiesList, setCitiesList] = useState([]);
 
     const [isAccountDeleted, setIsAccountDeleted] = useState(false);
-
-
     // CUSTOMER ACOOUNT ACTIVE OR INACTIVE
 
     const handleDeleteAccount = async () => {
         try {
-            await axios.post('http://148.251.230.14:8000/customer/status', {
+            await axios.post('http://localhost:8000/customer/status', {
                 customerId: customerId, // Ensure you have the customerId of the customer
                 status: 'InActive' // You can send 'InActive' or 'Active' based on the current state
             });
@@ -72,7 +70,7 @@ function Profile_View() {
 
     const handleActivateAccount = async () => {
         try {
-            await axios.post('http://148.251.230.14:8000/customer/status', {
+            await axios.post('http://localhost:8000/customer/status', {
                 customerId: customerId,
                 status: 'Active' // Set the status to 'active'
             });
@@ -97,7 +95,7 @@ function Profile_View() {
     const [gstNo, setGstNo] = useState('');
     const [cibilRecord, setCibilRecord] = useState('');
     const [successMessage, setSuccessMessage] = useState(null);
-    const [activeTab, setActiveTab] = useState('details'); // Define the activeTab state
+    const [activeTab, setActiveTab] = useState('address'); // Define the activeTab state
     const [showModal, setShowModal] = useState(false);
     const [editingMode, setEditingMode] = useState(false);
     const [editiloanprocess, seteditiloanprocess] = useState(false);
@@ -114,7 +112,7 @@ function Profile_View() {
     useEffect(() => {
         const fetchCustomerDetails = async () => {
             try {
-                const response = await axios.get('http://148.251.230.14:8000/customer-details', {
+                const response = await axios.get('http://localhost:8000/customer-details', {
                     params: { customerId: customerId }
                 });
                 setCustomerDetails(response.data);
@@ -122,7 +120,7 @@ function Profile_View() {
                 setAddressDetails(response.data.address || {});
                 setLoading(false);
             } catch (error) {
-                console.error('Error fetching customer details:', error);
+                // console.error('Error fetching customer details:', error);
                 setLoading(false);
             }
         };
@@ -137,58 +135,26 @@ function Profile_View() {
 
 
     // FETCH LOAN TYPES IN MASTER  
-
     const [loanTypes, setLoanTypes] = useState([]);
 
     useEffect(() => {
-        const fetchLoanTypes = async () => {
-            try {
-                const response = await axios.get('http://148.251.230.14:8000/api/loan-types');
-                setLoanTypes(response.data);
-            } catch (error) {
-                console.error('Error fetching loan types:', error);
-            }
-        };
-
-        fetchLoanTypes();
+        axios.get('http://localhost:8000/api/loan-types')
+            .then(response => {
+                setLoanTypes(response.data.map(type => ({
+                    value: type.id,
+                    label: type.type
+                })));
+            })
+            .catch(error => {
+                setError(error.message);
+            });
     }, []);
-
-
-
-    // FETCH LEVEL OF LOAN AMOUNT FROM MASTER
-
-    const [level, setLevel] = useState('');
-    const determineLevel = async (amount) => {
-        try {
-            const response = await axios.post('http://148.251.230.14:8000/api/determine-loan-level', { loanAmount: amount });
-            setLevel(response.data.loanLevel);
-        } catch (error) {
-            console.error('Error determining loan level:', error);
-        }
-    };
-    const [formattedLoanRequired, setFormattedLoanRequired] = useState('');
-
-    useEffect(() => {
-        if (customerDetails && customerDetails.loanRequired) {
-            let amount = customerDetails.loanRequired;
-            if (typeof amount === 'string') {
-                amount = amount.replace(/,/g, '');
-            }
-            amount = Number(amount);
-            if (!isNaN(amount)) {
-                determineLevel(amount);
-                setFormattedLoanRequired(formatAmountWithCommas(amount.toString()));
-            }
-        }
-    }, [customerDetails]);
-
     // SINGLE CUSTOMER DETAIL UPDATE
     const handleSaveClick = async () => {
         if (!customerDetails || !customerId) {
             alert("Customer details are not properly loaded.");
             return;
         }
-        determineLevel(customerDetails.loanRequired);
         const updatedDetails = {
             customerType: customerDetails.customerType,
             title: customerDetails.title,
@@ -201,11 +167,10 @@ function Profile_View() {
             customermailid: customerDetails.customermailid,
             typeofloan: customerDetails.typeofloan,
             loanRequired: customerDetails.loanRequired,
-            level: level
         };
-        console.log(updatedDetails);
+        // console.log(updatedDetails);
         try {
-            const response = await axios.put('http://148.251.230.14:8000/update-customer-details', {
+            const response = await axios.put('http://localhost:8000/update-customer-details', {
                 customerId: customerId, // Use the _id from customerDetails
                 updatedDetails: updatedDetails
             });
@@ -231,14 +196,14 @@ function Profile_View() {
     useEffect(() => {
         const checkForPdf = async () => {
             try {
-                const response = await axios.get('http://148.251.230.14:8000/api/check-pdf', {
+                const response = await axios.get('http://localhost:8000/api/check-pdf', {
                     params: { customerId: customerId }
                 });
                 if (response.status === 200) {
                     setShowDownloadLink(true);
                 }
             } catch (error) {
-                console.log('No existing PDF found for this customer');
+                // console.log('No existing PDF found for this customer');
             }
         };
 
@@ -272,7 +237,7 @@ function Profile_View() {
         formData.append('customerId', customerDetails._id);
 
         try {
-            await axios.post('http://148.251.230.14:8000/api/upload-pdf', formData, {
+            await axios.post('http://localhost:8000/api/upload-pdf', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -293,7 +258,7 @@ function Profile_View() {
 
     const fetchLoanProcessingDetails = async () => {
         try {
-            const response = await axios.get('http://148.251.230.14:8000/get-loan-processing', {
+            const response = await axios.get('http://localhost:8000/get-loan-processing', {
                 params: { customerId: customerId }
             });
             if (response.status === 200) {
@@ -316,8 +281,8 @@ function Profile_View() {
                 // Loan processing details not found
                 seteditiloanprocess(true);
             } else {
-                console.error('Error fetching loan processing details:', error);
-                alert('Failed to fetch loan processing details');
+                // console.error('Error fetching loan processing details:', error);
+                // alert('Failed to fetch loan processing details');
             }
         }
     };
@@ -354,7 +319,7 @@ function Profile_View() {
             return;
         }
         try {
-            await axios.post('http://148.251.230.14:8000/api/save-loan-processing', {
+            await axios.post('http://localhost:8000/api/save-loan-processing', {
                 selectedOptions, // Ensure this is defined somewhere in your component
                 checkBounds,
                 blockStatus,
@@ -400,13 +365,13 @@ function Profile_View() {
                 ? previousLoanDetails
                 : [{ financeName: 'No previous loan', yearOfLoan: null, loanAmount: 0, outstandingAmount: 0 }];
 
-            await axios.post('http://148.251.230.14:8000/add-previous-loans', {
+            await axios.post('http://localhost:8000/add-previous-loans', {
                 previousLoans: loansToSave,
                 customerId: customerId,
             });
 
             alert('Loan processing details saved successfully');
-            setActiveTab('loanprocessing');
+            // setActiveTab('loanprocessing');
 
         } catch (error) {
             console.error('Error updating previous loan details:', error);
@@ -431,7 +396,7 @@ function Profile_View() {
         const loanToDelete = previousLoanDetails[index];
         if (loanToDelete._id) {
             try {
-                await axios.delete(`http://148.251.230.14:8000/delete-previous-loan/${loanToDelete._id}`);
+                await axios.delete(`http://localhost:8000/delete-previous-loan/${loanToDelete._id}`);
                 alert('Loan deleted successfully');
             } catch (error) {
                 console.error('Error deleting previous loan:', error);
@@ -447,12 +412,12 @@ function Profile_View() {
     // FETCH PREVIOUS LOAN
     const fetchPreviousLoans = async () => {
         try {
-            const response = await axios.get('http://148.251.230.14:8000/get-previous-loans', {
+            const response = await axios.get('http://localhost:8000/get-previous-loans', {
                 params: { customerId: customerId }
             });
             setPreviousLoanDetails(response.data);
         } catch (error) {
-            console.error('Error fetching previous loans:', error);
+            // console.error('Error fetching previous loans:', error);
         }
     };
 
@@ -561,7 +526,7 @@ function Profile_View() {
             return;
         }
         try {
-            await axios.post(`http://148.251.230.14:8000/add-address`, {
+            await axios.post(`http://localhost:8000/add-address`, {
                 customerId: customerId,
                 address: addressDetails,
             });
@@ -579,8 +544,7 @@ function Profile_View() {
     useEffect(() => {
         const fetchAddressDetails = async () => {
             try {
-                console.log(`Fetching address details for customerId: ${customerId}`);
-                const response = await axios.get(`http://148.251.230.14:8000/view-address`, {
+                const response = await axios.get(`http://localhost:8000/view-address`, {
                     params: { customerId: customerId }
                 });
                 if (response.data) {
@@ -597,7 +561,7 @@ function Profile_View() {
                     setEditingModeAddress(true);
                 }
             } catch (error) {
-                console.error('Error fetching address details:', error);
+                // console.error('Error fetching address details:', error);
                 setEditingModeAddress(true);
             }
         };
@@ -624,7 +588,7 @@ function Profile_View() {
         formData.append('profilePicture', file);
         formData.append('customerId', customerId);
         try {
-            const response = await axios.post('http://148.251.230.14:8000/api/profile/upload-profile-picture', formData, {
+            const response = await axios.post('http://localhost:8000/api/profile/upload-profile-picture', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -642,7 +606,7 @@ function Profile_View() {
 
     const fetchProfilePicture = async (customerId) => {
         try {
-            const response = await axios.get(`http://148.251.230.14:8000/api/profile/view-profile-picture?customerId=${customerId}`, {
+            const response = await axios.get(`http://localhost:8000/api/profile/view-profile-picture?customerId=${customerId}`, {
                 responseType: 'arraybuffer'
             });
             const contentType = response.headers['content-type'];
@@ -658,8 +622,8 @@ function Profile_View() {
                 setImageSrc(null);
             }
         } catch (err) {
-            console.error('Error retrieving profile picture:', err);
-            setError('Failed to load profile picture');
+            // console.error('Error retrieving profile picture:', err);
+            // setError('Failed to load profile picture');
             setImageSrc(null);
         }
     };
@@ -679,7 +643,7 @@ function Profile_View() {
     useEffect(() => {
         const fetchSalariedPersonDetails = async () => {
             try {
-                const response = await axios.get('http://148.251.230.14:8000/salariedperson', {
+                const response = await axios.get('http://localhost:8000/salariedperson', {
                     params: { customerId: customerId }
                 });
                 if (response.status === 200) {
@@ -695,10 +659,10 @@ function Profile_View() {
                     }
                 }
             } catch (error) {
-                setError('Error fetching Salaried Person details');
-                alert("Error fetching Salaried Person details")
+                // setError('Error fetching Salaried Person details');
+                // alert("Error fetching Salaried Person details")
 
-                console.error('Error fetching Salaried Person details:', error);
+                // console.error('Error fetching Salaried Person details:', error);
             } finally {
                 setLoading(false);
             }
@@ -728,7 +692,7 @@ function Profile_View() {
         if (salariedPersonToDelete) {
             if (salariedPersonToDelete._id) {
                 // If the salaried person has been saved before, delete it from the database
-                axios.delete(`http://148.251.230.14:8000/salariedperson/${_id}`)
+                axios.delete(`http://localhost:8000/salariedperson/${_id}`)
                     .then(() => {
                         alert('Salaried person deleted successfully');
                     })
@@ -746,14 +710,14 @@ function Profile_View() {
     const handleSaveSalariedPerson = async () => {
         try {
 
-            const response = await axios.post('http://148.251.230.14:8000/salariedperson', {
+            const response = await axios.post('http://localhost:8000/salariedperson', {
                 customerId: customerId,
                 salariedperson: salariedPersons
             });
 
             if (response.status === 200) {
                 alert("Salaried Person aved successfully")
-                setActiveTab('loanprocessing')
+                // setActiveTab('loanprocessing')
             }
         } catch (error) {
             console.error('Error saving Salaried Person details:', error);
@@ -767,7 +731,7 @@ function Profile_View() {
     useEffect(() => {
         const fetchFileStatuses = async () => {
             try {
-                const response = await axios.get('http://148.251.230.14:8000/api/file-status');
+                const response = await axios.get('http://localhost:8000/api/file-status');
                 setFileStatuses(response.data);
             } catch (error) {
                 console.error('Error fetching file statuses:', error);
@@ -799,7 +763,7 @@ function Profile_View() {
     return (
         <Container fluid className={`Customer-basic-view-container ${isSidebarExpanded ? 'sidebar-expanded' : ''}`}>
             <div style={{ paddingBottom: '18px' }}>
-            <PathnameUrlPath location={location} homepage={homepage} />
+                <PathnameUrlPath location={location} homepage={homepage} />
             </div>
             <Row className="Section-1-Row" >
                 <Col className="New-Customer-container-second basic-view-col">
@@ -822,7 +786,7 @@ function Profile_View() {
                             </span>
                             {showDownloadLink && (
                                 <span>
-                                    <a href={`http://148.251.230.14:8000/api/download-pdf/${customerDetails._id}`} style={{ textDecoration: 'none' }} download="Cibil_Report.pdf">
+                                    <a href={`http://localhost:8000/api/download-pdf/${customerDetails._id}`} style={{ textDecoration: 'none' }} download="Cibil_Report.pdf">
                                         Cibil Report Download
                                     </a>
                                 </span>
@@ -886,7 +850,7 @@ function Profile_View() {
                         <>
                             <Row className="Row1 view-row-size">
                                 <Col className='basic-col-width' lg={2} ><span className="customer-sentence">Customer Type</span></Col>
-                                <Col lg={1}>
+                                <Col lg={2}>
                                     <input
                                         type="radio"
                                         value="Business"
@@ -939,8 +903,8 @@ function Profile_View() {
                                 </Col>
                             </Row>
                             <Row className="Row1 view-row-size">
-                                <Col className='basic-col-width' lg={3}><span className="customer-sentence">Primary Contact</span></Col>
-                                <Col lg={2}><input type="text" className="box" value={customerDetails.customerFname} onChange={(e) => handleInputChange('customerFname', e.target.value)} /></Col>
+                                <Col className='basic-col-width' lg={2}><span className="customer-sentence">Primary Contact</span></Col>
+                                <Col lg={3}><input type="text" className="box" value={customerDetails.customerFname} onChange={(e) => handleInputChange('customerFname', e.target.value)} /></Col>
                                 <Col  ><input type="text" className="box" value={customerDetails.customerLname} onChange={(e) => handleInputChange('customerLname', e.target.value)} /></Col>
                             </Row>
                             <Row className="Row1 view-row-size">
@@ -960,8 +924,8 @@ function Profile_View() {
                                 </Col>
                             </Row>
                             <Row className="Row1 view-row-size">
-                                <Col className='basic-col-width' lg={3}><span className="customer-sentence">Mobile Number</span></Col>
-                                <Col lg={2} ><input type="text" className="box" value={customerDetails.customercontact} onChange={(e) => handleInputChange('customercontact', e.target.value)} /></Col>
+                                <Col className='basic-col-width' lg={2}><span className="customer-sentence">Mobile Number</span></Col>
+                                <Col lg={3} ><input type="text" className="box" value={customerDetails.customercontact} onChange={(e) => handleInputChange('customercontact', e.target.value)} /></Col>
                                 <Col lg={2}><input type="text" className="box" value={customerDetails.customeralterno} onChange={(e) => handleInputChange('customeralterno', e.target.value)} /></Col>
                             </Row>
                             <Row className="Row1 view-row-size">
@@ -971,9 +935,29 @@ function Profile_View() {
                             <Row className="Row1 view-row-size">
                                 <Col className='basic-col-width' lg={2}><span className="customer-sentence">E-Mail</span></Col>
                                 <Col  ><input type="text" className="box" value={customerDetails.customermailid} onChange={(e) => handleInputChange('customermailid', e.target.value)} /></Col>
-
                             </Row>
-                            
+                            <Row className="Row1 view-row-size">
+                                <Col className='basic-col-width' lg={2}><span className="customer-sentence">Loan Amount</span></Col>
+                                <Col  ><input type="text" className="box" value={customerDetails.loanRequired} onChange={(e) => handleInputChange('loanRequired', e.target.value)} /></Col>
+                            </Row>
+                            <Row className="Row1 view-row-size">
+                                <Col className='basic-col-width' lg={2}><span className="customer-sentence">Type of Loan</span></Col>
+                                <Col >
+                                    <select
+                                        value={customerDetails.typeofloan || ''}
+                                        onChange={(e) => handleInputChange('typeofloan', e.target.value)}
+                                        style={{width:'200px'}}
+                                        className="dropdown box "
+                                    >
+                                        <option value="">Select Loan Type</option>
+                                        {loanTypes.map((type) => (
+                                            <option key={type.value} value={type.value}>
+                                                {type.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </Col>
+                            </Row>
                             {/* Add input fields for other customer details similarly */}
                         </>
                     ) : (
@@ -1009,8 +993,15 @@ function Profile_View() {
                                 <Col className='basic-col-width' lg={2}><span className="customer-sentence">E-Mail</span></Col>
                                 <Col><div className=" box customer-data-font">{customerDetails.customermailid}</div></Col>
                             </Row>
-                            
-                           
+                            <Row className="Row1 view-row-size">
+                                <Col className='basic-col-width' lg={2}><span className="customer-sentence">Loan Amount</span></Col>
+                                <Col><div className="box customer-data-font">{customerDetails.loanRequired}</div></Col>
+                            </Row>
+                            <Row className="Row1 view-row-size">
+                                <Col className='basic-col-width' lg={2}><span className="customer-sentence">Loan type</span></Col>
+                                <Col><div className=" box customer-data-font">{customerDetails.typeofloan}</div></Col>
+                            </Row>
+
                         </>
                     )}
 
@@ -1024,7 +1015,7 @@ function Profile_View() {
                         {customerDetails.customerType === 'Salaried Person' && (
                             <Col lg={1} className={`col ${activeTab === 'salariedperson' ? 'active' : ''}`} style={{ fontWeight: "500" }} onClick={() => setActiveTab('salariedperson')}>Salaried Person</Col>
                         )}
-                        <Col lg={2} className={`col ${activeTab === 'loanprocessing' ? 'active' : ''}`} style={{ fontWeight: "500" }} onClick={() => setActiveTab('loanprocessing')}>Loan Processing</Col>
+                        {/* <Col lg={2} className={`col ${activeTab === 'loanprocessing' ? 'active' : ''}`} style={{ fontWeight: "500" }} onClick={() => setActiveTab('loanprocessing')}>Loan Processing</Col> */}
 
                         <div className={`Edit-button ${isSidebarExpanded ? 'sidebar-expanded' : ''}`}>
                             <Col lg={2}>
@@ -1567,7 +1558,7 @@ function Profile_View() {
                                         </Row>
                                         <Row>
                                             <Col>
-                           
+
                                                 <Row className="Row1 view-row-size">
                                                     <Col lg={3}><span className="customer-sentence">Cibil Score</span></Col>
                                                     <Col lg={2}><div className="box customer-data-font">{loanProcessingDetails && loanProcessingDetails.cibilRecord}</div></Col>
@@ -1601,11 +1592,11 @@ function Profile_View() {
                     {/* CUSTOMER DELETE THE ACCOUNT */}
 
                     <Row>
-                        <div style={{ textAlign: "end" }}>
+                        {/* <div style={{ textAlign: "end" }}>
                             <a href='#' style={{ textDecoration: "none" }} onClick={handleDeleteAccount}>
                                 Are you Delete Your Account ?
                             </a>
-                        </div>
+                        </div> */}
                     </Row>
                 </Col>
             </Row >

@@ -3,12 +3,9 @@ import { Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../DashBoard/DashBoardDesign/Header_Dashboard.css';
-import DsaTable from './DSA_Table_view';
 import './Customer_Login_Dashboard.css';
 import { useSidebar } from '../Customer/Navbar/SidebarContext';
-import Applied_Loan from './Applied_Loan';
 import Last_Div from './Last_div';
-import LoanGridView from './Gride_View_page';
 import { PiCircleFill } from "react-icons/pi";
 import VerticalBoxes from './Vertical_Box'; // Import the new component
 import PathnameUrlPath from '../URL_Path/Url_Path';
@@ -36,7 +33,7 @@ function Customer_Login_Dashboard() {
 
     const fetchDownloadTableCount = async (customerId) => {
         try {
-            const response = await axios.get(`http://148.251.230.14:8000/dsa-customer/downloadtable/count?customerId=${customerId}`);
+            const response = await axios.get(`http://localhost:8000/dsa-customer/downloadtable/count?customerId=${customerId}`);
             setDownloadTableCount(response.data.count);
         } catch (error) {
             console.error('Error fetching download table count:', error.message);
@@ -45,7 +42,7 @@ function Customer_Login_Dashboard() {
 
     const fetchTableCount = async (customerId) => {
         try {
-            const response = await axios.get(`http://148.251.230.14:8000/dsa-customer/table/count?customerId=${customerId}`);
+            const response = await axios.get(`http://localhost:8000/dsa-customer/table/count?customerId=${customerId}`);
             setTableCount(response.data.count);
         } catch (error) {
             console.error('Error fetching table count:', error.message);
@@ -54,7 +51,7 @@ function Customer_Login_Dashboard() {
 
     const fetchCustomerDetails = async (customerId) => {
         try {
-            const response = await axios.get('http://148.251.230.14:8000/customer-details', {
+            const response = await axios.get('http://localhost:8000/customer-details', {
                 params: { customerId: customerId }
             });
             setCustomerDetails(response.data);
@@ -65,11 +62,11 @@ function Customer_Login_Dashboard() {
 
     const fetchLastLoginSession = async (customerId) => {
         try {
-            const response = await axios.get('http://148.251.230.14:8000/customer/login/last-session', {
+            const response = await axios.get('http://localhost:8000/customer/login/last-session', {
                 params: { customerId: customerId }
             });
             setLastLoginDateTime(response.data.loginDateTime);
-            console.log(response.data.loginDateTime);
+            // console.log(response.data.loginDateTime);
         } catch (error) {
             console.error('Error fetching last login session:', error.message);
         }
@@ -142,8 +139,6 @@ function Customer_Login_Dashboard() {
                                 </div>
                             </div>
                         </Col>
-                        <DsaTable />
-                        <Applied_Loan />
                         <Last_Div />
                         <Top_5_DSA/>
                     </Row>

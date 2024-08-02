@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, DropdownButton, Dropdown } from 'react-bootstrap';
+import { Row, Col, DropdownButton, Dropdown } from 'react-bootstrap';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './First_Div.css';
@@ -19,9 +19,9 @@ function First_Div() {
   useEffect(() => {
     const fetchLoanApplications = async () => {
       try {
-        const response = await axios.get(`http://148.251.230.14:8000/dsa/customer/applied/loan/${dsaId}`);
+        const response = await axios.get(`http://localhost:8000/dsa/customer/applied/loan/${dsaId}`);
         const loanApplicationsData = response.data;
-        console.log(response.data);
+        // console.log(response.data);
         setLoanApplications(loanApplicationsData);
       } catch (error) {
         console.error('Error fetching loan applications:', error);
@@ -36,7 +36,7 @@ function First_Div() {
   useEffect(() => {
     const fetchDownloadTableCount = async () => {
       try {
-        const response = await axios.get(`http://148.251.230.14:8000/api/dsa/applications/count/${dsaId}`);
+        const response = await axios.get(`http://localhost:8000/api/dsa/applications/count/${dsaId}`);
         // setDownloadTableCount(response.data.count);
       } catch (error) {
         console.error('Error fetching loan application count:', error);
@@ -51,9 +51,9 @@ function First_Div() {
   useEffect(() => {
     const fetchTableCount = async () => {
       try {
-        const response = await axios.get(`http://148.251.230.14:8000/dsa/customer/apply/view/count/${dsaId}`);
+        const response = await axios.get(`http://localhost:8000/dsa/customer/apply/view/count/${dsaId}`);
         setTableCount(response.data.count);
-        console.log(response.data.count);
+        // console.log(response.data.count);
       } catch (error) {
         console.error('Error fetching apply view count:', error);
       }
@@ -67,7 +67,7 @@ function First_Div() {
   useEffect(() => {
     const fetchLoanStatusCounts = async () => {
       try {
-        const response = await axios.get(`http://148.251.230.14:8000/api/dsa/loan/status/count/${dsaId}`);
+        const response = await axios.get(`http://localhost:8000/api/dsa/loan/status/count/${dsaId}`);
         // setApprovedCount(response.data.approvedCount);
         // setRejectedCount(response.data.rejectedCount);
       } catch (error) {

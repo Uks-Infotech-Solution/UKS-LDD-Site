@@ -9,7 +9,7 @@ import { GrView } from "react-icons/gr";
 import { useSidebar } from '../Customer/Navbar/SidebarContext';
 import './DSA_Table_view.css';
 
-function DsaTable() {
+function Applied_Loan() {
   const location = useLocation();
   const { customerId } = location.state || {};
   const { isSidebarExpanded } = useSidebar();
@@ -40,14 +40,15 @@ function DsaTable() {
   useEffect(() => {
     const fetchLoanDetails = async () => {
       try {
-        const response = await axios.get(`http://148.251.230.14:8000/api/customer/${customerId}/loans`);
+        const response = await axios.get(`http://localhost:8000/api/customer/${customerId}/loans`);
         if (response.status === 200) {
           setAppliedLoan(response.data.data);
+          console.log(response.data.data);
           setLoading(false);
 
           // Fetch address details for each DSA
           const addressPromises = response.data.data.map(loan => (
-            axios.get(`http://148.251.230.14:8000/api/dsa/address?dsaId=${loan.dsaId}`)
+            axios.get(`http://localhost:8000/api/dsa/address?dsaId=${loan.dsaId}`)
           ));
           const addressResponses = await Promise.all(addressPromises);
           const addresses = {};
@@ -136,7 +137,7 @@ function DsaTable() {
 
   return (
     <>
-      <Container style={{ paddingTop: '20px' }}>
+      <Container fluid className={`apply-loan-view-container ${isSidebarExpanded ? 'sidebar-expanded' : ''}`}>
         <div className='dsa-table-container-second'>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '10px' }}>
             <span className='dsa-table-container-second-head'>Applied Loans</span>
@@ -253,4 +254,4 @@ function DsaTable() {
   );
 }
 
-export default DsaTable;
+export default Applied_Loan;

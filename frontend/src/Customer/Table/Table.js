@@ -43,7 +43,7 @@ function CustomerTable() {
   // Fetch DSA details
   const fetchDSADetails = async (dsaId) => {
     try {
-      const response = await axios.get(`http://148.251.230.14:8000/api/dsa?dsaId=${dsaId}`);
+      const response = await axios.get(`http://localhost:8000/api/dsa?dsaId=${dsaId}`);
       setDsaData(response.data);
     } catch (error) {
       console.error('Error fetching DSA details:', error);
@@ -60,7 +60,7 @@ function CustomerTable() {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const response = await axios.get('http://148.251.230.14:8000/');
+        const response = await axios.get('http://localhost:8000/');
         setCustomers(response.data);
         setLoading(false);
         const initialCheckedItems = {};
@@ -84,7 +84,7 @@ function CustomerTable() {
       const newAddresses = {};
       for (let customer of customers) {
         try {
-          const response = await axios.get('http://148.251.230.14:8000/view-address', {
+          const response = await axios.get('http://localhost:8000/view-address', {
             params: { customerId: customer._id },
           });
           if (response.status === 200) {
@@ -102,37 +102,14 @@ function CustomerTable() {
     }
   }, [customers]);
 
-  // Fetch customer statuses
-  useEffect(() => {
-    const fetchCustomerStatuses = async () => {
-      const newCustomerStatuses = {};
-      for (let customer of customers) {
-        try {
-          const response = await axios.get('http://148.251.230.14:8000/customer/status/table', {
-            params: { customerId: customer._id },
-          });
-          if (response.status === 200) {
-            newCustomerStatuses[customer._id] = response.data.status;
-          }
-        } catch (error) {
-          console.error(`Error fetching customer status for ${customer._id}:`, error);
-        }
-      }
-      setCustomerStatuses(newCustomerStatuses);
-    };
-
-    if (customers.length > 0) {
-      fetchCustomerStatuses();
-    }
-  }, [customers]);
-
+ 
   // Fetch loan processing details
   useEffect(() => {
     const fetchLoanProcessingDetails = async () => {
       const newLoanProcessingDetails = {};
       for (let customer of customers) {
         try {
-          const response = await axios.get('http://148.251.230.14:8000/get-loan-processing', {
+          const response = await axios.get('http://localhost:8000/get-loan-processing', {
             params: { customerId: customer._id },
           });
           if (response.status === 200) {
@@ -154,7 +131,7 @@ function CustomerTable() {
 
   const fetchProfilePicture = async (customerId) => {
     try {
-      const response = await axios.get(`http://148.251.230.14:8000/api/profile/view-profile-picture?customerId=${customerId}`, {
+      const response = await axios.get(`http://localhost:8000/api/profile/view-profile-picture?customerId=${customerId}`, {
         responseType: 'arraybuffer'
       });
       const contentType = response.headers['content-type'];
@@ -262,7 +239,7 @@ function CustomerTable() {
     }
 
     try {
-      const response = await axios.post('http://148.251.230.14:8000/dsa-customer/table', {
+      const response = await axios.post('http://localhost:8000/dsa-customer/table', {
         dsaId: dsaData._id,
         customerId: selectedCustomer._id,
       });
@@ -434,9 +411,9 @@ function CustomerTable() {
                         'Loading...'
                       )}
                     </td>
-                    <td style={{}}>{customerStatuses[customer._id] && (
-                      customerStatuses[customer._id]
-                    )}</td>
+                    <td style={{ color: customer.isActive ? 'green' : 'red' }}>
+                      {customer.isActive ? 'Active' : 'Inactive'}
+                    </td>
                     <td>
                       <GrView  onClick={() => handleEditClick(customer._id)} style={{ cursor: 'pointer', color: '#2492eb' }} />
                     </td>

@@ -3,11 +3,8 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import { SidebarProvider } from './Customer/Navbar/SidebarContext';
-import { CustomerProvider } from './Customer/Navbar/Customername-context';
 import CustomerLogin from './Customer/Login/Customer-login';
 import DsaLogin from './DSA/DSA-login';
-import UpdateCustomer from './Customer/Update/Customer-update';
-import Heropage from './Indexpage/Hero';
 import Profile_View from './Customer-Dashboard/Customer-Profile/Basic_View';
 import AuthenticatedLayout from './Customer/Navbar/AuthenticateLayout';
 import Profile_Download from './Customer-Dashboard/Customer-Profile/Profile_Download';
@@ -24,7 +21,6 @@ import Customer_Dashboard from './Customer_Dashboard/Customer-Dashboard';
 import Dsa_Profile_View from './DSA/Dsa_dwnload_customer';
 import DsaTable from './Customer_Dashboard/DSA_Table_view';
 import Customer_Login_Dashboard from './Customer_Dashboard/Customer_Login_Dashboard';
-import Activate from './DSA/DSA_Activate';
 import UKS_Activate from './DashBoard/Dashbordlogin/UKS_Activate';
 import DSA_Activate from './DSA/DSA_Activate';
 import Customer_Activate from './Indexpage/Section-1/Customer_Activate';
@@ -69,6 +65,8 @@ import Sales_Cus_List from './Sales_Person/Customer_Reg/Sales_Cus_List';
 import Sales_Dsa_list from './Sales_Person/DSA_Reg/Sales_Dsa_List';
 import Sales_Person_dashboard from './Sales_Person/Sales_Person_Dashboard';
 import Sales_Packagers from './Sales_Person/Sales_Packagers';
+import Applied_Loan from './Customer_Dashboard/Applied_Loan';
+import Purchased_Package from './DSA/DSA_Dashboard/Purchase_Package';
 
 function App() {
   return (
@@ -122,6 +120,10 @@ function App() {
             <Route path="/dsa/detail/view" element={<DSA_Detail_View />} />
             <Route path="/dsa/grid/view" element={<LoanGridView />} />
             <Route path="/Customer/Applied/dsalist" element={<Applied_Loan_View />} />
+            <Route path="/Dsa/List" element={<DsaTable />} />
+            <Route path="/Applied/Loan/List" element={<Applied_Loan />} />
+
+
             <Route path="/:loginType/login" element={<Login_Authenticate />} />
 
 
@@ -141,6 +143,7 @@ function App() {
             <Route path="/dsa/address" element={<DSA_AddressForm />} />
             <Route path="/dsa/loan/details" element={<DSA_Loan_Details />} />
             <Route path="/pricing" element={<PricingBox />} />
+            <Route path="/purchased/package" element={<Purchased_Package />} />
 
 
             <Route path="/dsa/customer/download" element={<Dsa_Profile_View />} />

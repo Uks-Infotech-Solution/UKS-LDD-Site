@@ -3,11 +3,10 @@ import { Table, Container, FormControl, DropdownButton, Dropdown } from 'react-b
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './Customer_List.css';
-import { MdHome, MdArrowForwardIos, MdEdit, MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
-import { FaUserCircle, FaFileDownload } from 'react-icons/fa';
+import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
+import { FaUserCircle } from 'react-icons/fa';
 import { IoFilterSharp } from 'react-icons/io5';
 import { LiaSortAlphaDownSolid } from 'react-icons/lia';
-import { SiBitcoinsv } from 'react-icons/si';
 import { GrView } from 'react-icons/gr';
 import { useSidebar } from '../../Customer/Navbar/SidebarContext';
 
@@ -17,93 +16,69 @@ function Applied_Customer_List() {
   const [dsaData, setDsaData] = useState(null);
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [checkedItems, setCheckedItems] = useState({});
   const [addresses, setAddresses] = useState({});
   const [profilePictures, setProfilePictures] = useState({});
   const [filterOption, setFilterOption] = useState('District');
   const [filterValue, setFilterValue] = useState('');
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
-  const [customerStatuses, setCustomerStatuses] = useState({});
   const [sortingOrder, setSortingOrder] = useState('asc');
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const filterDropdownRef = useRef(null);
-  const [loanProcessingDetails, setLoanProcessingDetails] = useState({});
   const [error, setError] = useState(null);
-  const [allChecked, setAllChecked] = useState(false);
   const { dsaId } = location.state || {};
-  const [packages, setPackages] = useState({ loanTypes: [] });
   const { isSidebarExpanded } = useSidebar();
 
-
-// console.log(dsaId);
   const fetchDSADetails = async (dsaId) => {
     try {
-      const response = await axios.get(`http://148.251.230.14:8000/api/dsa?dsaId=${dsaId}`);
+      const response = await axios.get(`http://localhost:8000/api/dsa?dsaId=${dsaId}`);
       setDsaData(response.data);
     } catch (error) {
       console.error('Error fetching DSA details:', error);
     }
   };
-  useEffect(() => {
-    const fetchPackages = async () => {
-        try {
-            const response = await axios.get(`http://148.251.230.14:8000/buy_packages/dsa/${dsaId}`);
-            setPackages(response.data);
-            console.log(response.data);
-        } catch (err) {
-            console.log(err);
-        }
-    };
-
-    fetchPackages();
-}, [dsaId]);
 
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const response = await axios.get(`http://148.251.230.14:8000/dsa/customer/applied/loan/${dsaId}`);
+        const response = await axios.get(`http://localhost:8000/dsa/customer/applied/loan/${dsaId}`);
         const customersData = response.data;
         setCustomers(customersData);
-  
-        const initialCheckedItems = {};
-        const addresses = {};
-        const profilePictures = {};
-  
-        for (let customer of customersData) {
-          initialCheckedItems[customer._id] = false;
-  
+        console.log('Fetched customers:', customersData);
+
+        const initialAddresses = {};
+        const initialProfilePictures = {};
+
+        for (const customer of customersData) {
           try {
-            const addressResponse = await axios.get('http://148.251.230.14:8000/view-address', {
+            const addressResponse = await axios.get('http://localhost:8000/view-address', {
               params: { customerId: customer.customerId },
             });
-            addresses[customer._id] = addressResponse.data;
+            initialAddresses[customer._id] = addressResponse.data;
           } catch (error) {
             console.error(`Error fetching address for customer ${customer._id}:`, error);
           }
-  
+
           try {
-            const response = await axios.get(`http://148.251.230.14:8000/api/profile/view-profile-picture?customerId=${customer.customerId}`, {
+            const response = await axios.get(`http://localhost:8000/api/profile/view-profile-picture?customerId=${customer.customerId}`, {
               responseType: 'arraybuffer',
             });
             const contentType = response.headers['content-type'];
-  
             if (contentType && contentType.startsWith('image')) {
               const base64Image = `data:${contentType};base64,${btoa(
                 String.fromCharCode(...new Uint8Array(response.data))
               )}`;
-              profilePictures[customer._id] = base64Image; // Update profilePictures state
+              initialProfilePictures[customer._id] = base64Image;
             } else {
               console.error('Response is not an image');
             }
           } catch (err) {
-            // console.error('Error retrieving profile picture:', err);
+            console.error('Error retrieving profile picture:', err);
           }
         }
-  
-        setCheckedItems(initialCheckedItems);
-        setAddresses(addresses);
-        setProfilePictures(profilePictures); // Update profilePictures state
+
+        setAddresses(initialAddresses);
+        setProfilePictures(initialProfilePictures);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching customers:', err);
@@ -111,7 +86,7 @@ function Applied_Customer_List() {
         setLoading(false);
       }
     };
-  
+
     if (dsaId) {
       fetchCustomers();
     }
@@ -139,7 +114,6 @@ function Applied_Customer_List() {
       return 0;
     }));
   };
-  
 
   const filteredCustomers = customers.filter((customer) => {
     if (filterOption === 'District') {
@@ -151,24 +125,11 @@ function Applied_Customer_List() {
       return customerAddress && customerAddress.aadharCity.toLowerCase().includes(filterValue.toLowerCase());
     }
     return true;
-  })
-  // .filter((customer) => {
-  // console.log(customer.loanType);
-
-  //   return Array.isArray(packages.loanTypes) && packages.loanTypes.includes(customer.loanType);
-  // });
+  });
 
   const indexOfLastCustomer = currentPage * rowsPerPage;
   const indexOfFirstCustomer = indexOfLastCustomer - rowsPerPage;
   const currentCustomers = filteredCustomers.slice(indexOfFirstCustomer, indexOfLastCustomer);
-
-  const handleCheckboxChange = (event, id) => {
-    const isChecked = event.target.checked;
-    setCheckedItems((prevState) => ({
-      ...prevState,
-      [id]: isChecked,
-    }));
-  };
 
   const handleEditClick = async (id) => {
     const selectedCustomer = customers.find((customer) => customer._id === id);
@@ -176,7 +137,7 @@ function Applied_Customer_List() {
       console.error('Selected customer not found');
       return;
     }
-  
+
     try {
       const currentDate = new Date().toISOString();
       const payload = {
@@ -186,15 +147,14 @@ function Applied_Customer_List() {
         applicationNumber: selectedCustomer.applicationNumber,
         date: currentDate,
       };
-  
-      await axios.post('http://148.251.230.14:8000/dsa/customer/apply/view/count', payload);
-       navigate('/applied/customer/view', { state: { loanId: selectedCustomer._id, applicationNumber: selectedCustomer.applicationNumber ,dsaId} });
-      
+
+      await axios.post('http://localhost:8000/dsa/customer/apply/view/count', payload);
+      navigate('/applied/customer/view', { state: { loanId: selectedCustomer._id, applicationNumber: selectedCustomer.applicationNumber, dsaId } });
     } catch (error) {
       console.error('Error storing data:', error.response ? error.response.data : error.message);
     }
   };
-  
+
   const handleRowsPerPageChange = (selectedRowsPerPage) => {
     setRowsPerPage(selectedRowsPerPage);
     setCurrentPage(1);
@@ -203,15 +163,6 @@ function Applied_Customer_List() {
   const handleFilterOptionChange = (option) => {
     setFilterOption(option);
     setShowFilterDropdown(true);
-  };
-
-  const handleAllChecked = (event) => {
-    const isChecked = event.target.checked;
-    const newCheckedItems = {};
-    customers.forEach((customer) => {
-      newCheckedItems[customer._id] = isChecked;
-    });
-    setCheckedItems(newCheckedItems);
   };
 
   const paginate = (pageNumber) => {
@@ -224,7 +175,7 @@ function Applied_Customer_List() {
 
   return (
     <>
-                   <Container fluid className={`Customer-basic-view-container ${isSidebarExpanded ? 'sidebar-expanded' : ''}`}>
+      <Container fluid className={`Customer-basic-view-container ${isSidebarExpanded ? 'sidebar-expanded' : ''}`}>
         <Container className='Customer-table-container-second'>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span className='Customer-table-container-second-head'>Applied Customers List</span>
@@ -239,7 +190,6 @@ function Applied_Customer_List() {
                 style={{ paddingRight: "10px", cursor: 'pointer' }}
                 onClick={handleSort}
               />
-
               {showFilterDropdown && (
                 <div ref={filterDropdownRef} className="filter-dropdown" style={{ width: "400px", display: 'flex', alignItems: 'center', right: 0, top: '100%', zIndex: 1, marginRight: "0px" }}>
                   <FormControl
@@ -253,122 +203,68 @@ function Applied_Customer_List() {
                     id="dropdown-basic-button"
                     title={filterOption}
                     onSelect={(eventKey) => handleFilterOptionChange(eventKey)}
-                    style={{ marginRight: '10px' }}
+                    style={{ marginRight: "15px", width: "120px" }}
                   >
-                    <Dropdown.Item eventKey="District" style={{}}>District</Dropdown.Item>
+                    <Dropdown.Item eventKey="District">District</Dropdown.Item>
                     <Dropdown.Item eventKey="Area">Area</Dropdown.Item>
                   </DropdownButton>
                 </div>
               )}
             </span>
           </div>
-          <div className="table-responsive">
-            <Table striped bordered hover className='dsa-table-line'>
-              <thead>
+          <Table responsive hover className='Customer-table-second'>
+            <thead className='Customer-table-header-second'>
+              <tr className='Customer-table-header-row-second'>
+                <th className='header-cell'>Name</th>
+                <th className='header-cell'>District</th>
+                <th className='header-cell'>Area</th>
+                <th className='header-cell'>Application Number</th>
+                <th className='header-cell'>Profile Picture</th>
+                <th className='header-cell'>View</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentCustomers.length > 0 ? (
+                currentCustomers.map((customer) => {
+                  const customerAddress = addresses[customer._id] || {};
+                  const profilePicture = profilePictures[customer._id] || <FaUserCircle size={40} />;
+                  console.log(`Rendering customer: ${customer.customerName}`);
+                  return (
+                    <tr key={customer._id} className='Customer-table-row-second'>
+                      <td className='data-cell'>{customer.customerName}</td>
+                      <td className='data-cell'>{customerAddress.aadharDistrict || 'N/A'}</td>
+                      <td className='data-cell'>{customerAddress.aadharCity || 'N/A'}</td>
+                      <td className='data-cell'>{customer.applicationNumber}</td>
+                      <td className='data-cell'>{typeof profilePicture === 'string' ? <img src={profilePicture} alt="Profile" style={{ width: '40px', height: '40px' }} /> : profilePicture}</td>
+                      <td className='data-cell'>
+                        <button onClick={() => handleEditClick(customer._id)}>
+                          <GrView />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
                 <tr>
-                  {/* <th>
-                    <input
-                      type="checkbox"
-                      checked={allChecked}
-                      onChange={(e) => {
-                        setAllChecked(e.target.checked);
-                        handleAllChecked(e);
-                      }}
-                    />
-                  </th> */}
-                  <th className='Customer-Table-head'>SI.No</th>
-                  <th className='Customer-Table-head'>Application No</th>
-                  <th className='Customer-Table-head'>Customer No</th>
-                  <th className='Customer-Table-head'>Name</th>
-                  <th className='Customer-Table-head'>District</th>
-                  <th className='Customer-Table-head'>Area</th>
-                  <th className='Customer-Table-head'>Type of Loan</th>
-                  <th className='Customer-Table-head'>Amount</th>
-                  <th className='Customer-Table-head'>Required Days</th>
-
-                  <th className='Customer-Table-head'>Status</th>
-
-                  <th className='Customer-Table-head'>View</th>
-                  {/* <th className='Customer-Table-head'>Pdf</th> */}
+                  <td colSpan="6" className='data-cell'>No customers found.</td>
                 </tr>
-              </thead>
-              <tbody>
-  {/* Render only the customers for the current page */}
-  {filteredCustomers.slice(indexOfFirstCustomer, indexOfLastCustomer).map((customer, index) => (
-    packages.some(pkg => Array.isArray(pkg.loanTypes) && pkg.loanTypes.includes(customer.loanType)) && (
-      <tr key={customer._id}>
-        {/* <td >
-          <input
-            type='checkbox'
-            className='customer-list-checkbox'
-            checked={checkedItems[customer._id]}
-            onChange={(e) => handleCheckboxChange(e, customer._id)}
-          />
-        </td> */}
-        <td>{indexOfFirstCustomer + index + 1}</td>
-        <td>UKS-Application-00{customer.applicationNumber}</td>
-        <td style={{ width: '100px' }}>
-          {customer.customerNo ? `UKS-CU-${customer.customerNo.toString().padStart(3, '0')}` : 'N/A'}
-        </td>
-        <td style={{ display: 'flex', paddingTop: '0px' }}>
-          {profilePictures[customer._id] ? (
-            <div style={{
-              backgroundImage: `url(${profilePictures[customer._id]})`,
-              backgroundSize: 'cover',
-              borderRadius: '50%',
-              height: '30px',
-              width: '30px',
-              marginRight: '10px',
-              marginLeft: '3px'
-            }}></div>
-          ) : (
-            <FaUserCircle size={32} className='navbar-profile-icon' style={{ marginRight: '10px' }} />
-          )}
-          <span style={{ textAlign: 'center' }}>{customer.customerName}</span>
-        </td>
-        {addresses[customer._id] && (
-          <>
-            <td>{addresses[customer._id].aadharDistrict || 'No District'}</td>
-            <td>{addresses[customer._id].aadharCity || 'No City'}</td>
-          </>
-        )}
-        <td>{customer.loanType}</td>
-        <td>{customer.loanAmount}</td>
-        <td>{customer.loanRequiredDays}</td>
-        <td>{customer.applyLoanStatus}</td>
-        <td>
-          <GrView onClick={() => handleEditClick(customer._id)} style={{ cursor: 'pointer', color: '#2492eb' }} />
-        </td>
-      </tr>
-    )
-  ))}
-</tbody>
-
-            </Table>
+              )}
+            </tbody>
+          </Table>
+          <div className='pagination'>
+            <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1}>
+              <MdKeyboardArrowLeft size={25} />
+            </button>
+            <span>{currentPage}</span>
+            <button onClick={() => paginate(currentPage + 1)} disabled={indexOfLastCustomer >= filteredCustomers.length}>
+              <MdKeyboardArrowRight size={25} />
+            </button>
+            <select value={rowsPerPage} onChange={(e) => handleRowsPerPageChange(parseInt(e.target.value, 10))}>
+              <option value={5}>5 rows</option>
+              <option value={10}>10 rows</option>
+              <option value={20}>20 rows</option>
+            </select>
           </div>
-          <div className="pagination-container">
-            <div className="pagination">
-              <span style={{ marginRight: '10px' }}>Rows per page:  </span>
-              <DropdownButton
-                id="rowsPerPageDropdown"
-                title={`${rowsPerPage}`}
-                onSelect={handleRowsPerPageChange}
-                className='table-row-per-button'
-              >
-                <Dropdown.Item eventKey="5">5</Dropdown.Item>
-                <Dropdown.Item eventKey="10">10</Dropdown.Item>
-                <Dropdown.Item eventKey="15">15</Dropdown.Item>
-                <Dropdown.Item eventKey="20">20</Dropdown.Item>
-              </DropdownButton>
-              <MdKeyboardArrowLeft size={25} onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} />
-
-              <span>Page {currentPage}</span>
-              <MdKeyboardArrowRight size={25} onClick={() => paginate(currentPage + 1)} disabled={indexOfLastCustomer >= filteredCustomers.length} />
-
-
-            </div>
-          </div>
-
         </Container>
       </Container>
     </>

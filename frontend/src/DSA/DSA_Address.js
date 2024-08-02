@@ -72,9 +72,9 @@ const DSA_AddressForm = () => {
     // Function to fetch address details from API
     const fetchAddressDetails = async () => {
         try {
-            const response = await axios.get(`http://148.251.230.14:8000/api/dsa/address?dsaId=${dsaId}`);
+            const response = await axios.get(`http://localhost:8000/api/dsa/address?dsaId=${dsaId}`);
             const fetchedAddress = response.data;
-            console.log(response.data);
+            // console.log(response.data);
             if (fetchedAddress.aadharAddress.state) {
                 const updatedCities = City.getCitiesOfState('IN', fetchedAddress.aadharAddress.state).map(city => ({
                     label: city.name,
@@ -98,7 +98,7 @@ const DSA_AddressForm = () => {
                 
             });
         } catch (error) {
-            console.error('Error fetching address details:', error);
+            // console.error('Error fetching address details:', error);
             // Handle error fetching address details
         }
     };
@@ -147,7 +147,7 @@ const DSA_AddressForm = () => {
 
     const handleUpdateClick = async () => {
         try {
-            const response = await axios.post('http://148.251.230.14:8000/api/dsa/address', {
+            const response = await axios.post('http://localhost:8000/api/dsa/address', {
                 dsaId: dsaId,
                 aadharAddress: {
                     state: addressDetails.aadharState,

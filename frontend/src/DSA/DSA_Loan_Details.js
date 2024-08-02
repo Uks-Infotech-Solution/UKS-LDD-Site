@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Row, Col, Button } from 'react-bootstrap';
 import Select from 'react-select';
 import axios from 'axios';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { IoCloseSharp } from 'react-icons/io5';
 
 const DSA_Loan_Details = () => {
-    const navigate = useNavigate();
     const location = useLocation();
     const { dsaId } = location.state || {};
 
@@ -18,7 +17,7 @@ const DSA_Loan_Details = () => {
     useEffect(() => {
         const fetchLoanDetails = async () => {
             try {
-                const response = await axios.get(`http://148.251.230.14:8000/api/dsa/${dsaId}/loanDetails`);
+                const response = await axios.get(`http://localhost:8000/api/dsa/${dsaId}/loanDetails`);
                 if (response.status === 200) {
                     setLoanDetails(response.data.loanDetails);
                 }
@@ -29,9 +28,9 @@ const DSA_Loan_Details = () => {
 
         const fetchRequiredTypes = async () => {
             try {
-                const response = await axios.get('http://148.251.230.14:8000/api/dsa/required/type');
+                const response = await axios.get('http://localhost:8000/api/dsa/required/type');
                 if (response.status === 200) {
-                    console.log(response.data);
+                    // console.log(response.data);
                     const options = response.data.map((type) => ({
                         value: type.requiredType,
                         label: type.requiredType
@@ -62,7 +61,7 @@ const DSA_Loan_Details = () => {
 
     const deleteLoanRow = async (index, loanId) => {
         try {
-            const response = await axios.delete(`http://148.251.230.14:8000/api/dsa/loanDetails/${loanId}`);
+            const response = await axios.delete(`http://localhost:8000/api/dsa/loanDetails/${loanId}`);
             if (response.status === 200) {
                 const updatedLoanDetails = [...LoanDetails];
                 updatedLoanDetails.splice(index, 1);
@@ -80,7 +79,7 @@ const DSA_Loan_Details = () => {
 
     const handlePreviousLoanSave = async () => {
         try {
-            const response = await axios.post('http://148.251.230.14:8000/api/dsa/saveLoanDetails', { dsaId, loanDetails: LoanDetails });
+            const response = await axios.post('http://localhost:8000/api/dsa/saveLoanDetails', { dsaId, loanDetails: LoanDetails });
             if (response.status === 200) {
                 setSuccessMessage('Loan details saved successfully.');
                 alert('Loan details saved successfully.');
